@@ -22,8 +22,8 @@ export class CustomersService {
     return await this.customersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  async findOne(customer_id: string) {
+    return await this.customersRepository.findOneBy({ customer_id });
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
