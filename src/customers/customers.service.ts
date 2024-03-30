@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -26,8 +26,16 @@ export class CustomersService {
     return await this.customersRepository.findOneBy({ customer_id });
   }
 
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
+  async update(customer_id: string, updateCustomerDto: UpdateCustomerDto) {
+    let customer = await this.customersRepository.findOneBy({ customer_id });
+  
+    if (!customer) {
+      throw new NotFoundException('Customer not found');
+    }
+  
+    this.customersRepository.merge(customer, updateCustomerDto);
+  
+    return await this.customersRepository.save(customer);
   }
 
   remove(id: number) {
